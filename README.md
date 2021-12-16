@@ -32,10 +32,6 @@ Stores pay deliveries on the company account
 - [qb-sna-shops](https://github.com/Sna-aaa/qb-sna-shops) - 
 
 ## Screenshots
-![Platform](https://imgur.com/KzmXIaY.png)
-![Vehicle Spawner](https://imgur.com/bDYiFoG.png)
-![Stash](https://imgur.com/8fvy9FA.png)
-![On Duty/Off Duty](https://i.imgur.com/CM34EsL.png)
 
 ## Features
 - 
@@ -82,30 +78,8 @@ Add this to shared.lua to add new job
 	},
 
 
-Config.Locations = {                                        Locations for all
-    ["stash"] = vector3(-348.36, -169.72, 39.01),         
-    ["duty"] = vector3(-329.23, -163.39, 44.59),        
-    ["computer"] = vector3(-329.23, -163.39, 44.59),
-    ["delivery"] = vector3(-329.23, -163.39, 44.59)
-}
-
-Config.Products = {                                         List of products to buy
-    ["food"] = {
-        [1] = {
-            name = "tosti",
-            price = 2,
-            max = 500,
-        },
-        [2] = {
-            name = "water_bottle",
-            price = 2,
-            max = 500,
-        },
-    },
-
-
 ## ToDo
 ```
-
+replace inventory:server:addTrunkItems with direct db insert to maybe avoid the undefined problem
 
 

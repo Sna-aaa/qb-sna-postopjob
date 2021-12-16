@@ -6,6 +6,7 @@ local menu1 = MenuV:CreateMenu(false, 'Menu Commande', 'topleft', 155, 0, 0, 'si
 local menu3 = MenuV:CreateMenu(false, 'Nourriture', 'topleft', 155, 0, 0, 'size-125', 'none', 'menuv')
 local menu4 = MenuV:CreateMenu(false, 'Amusement', 'topleft', 155, 0, 0, 'size-125', 'none', 'menuv')
 local menu5 = MenuV:CreateMenu(false, 'Hardware', 'topleft', 155, 0, 0, 'size-125', 'none', 'menuv')
+local menu6 = MenuV:CreateMenu(false, 'Coffeeshop', 'topleft', 155, 0, 0, 'size-125', 'none', 'menuv')
 
 
 local PlayerJob = {}
@@ -49,6 +50,12 @@ local menu_button4 = menu1:AddButton({
     value = menu5,
     description = "Commander du matériel"
 })
+local menu_button4 = menu1:AddButton({
+    icon = '😃',
+    label = 'Coffeeshop',
+    value = menu6,
+    description = "Commander du matériel de grow"
+})
 
 local MenuList = {}
 local OrderList = {}
@@ -83,7 +90,98 @@ for list, _ in pairs(Conf.Products) do
         end
     end 
 end
+--Menu Amusement
+local LeisureMenu = {}
+local order_leisure_button = menu4:AddButton({
+    label = 'Commander',
+    value = nil,
+    description = 'Commander la selection'
+})
+order_leisure_button:On('select', function(item)
+    TriggerEvent('qb-postopjob:client:Order', MenuList, "leisure")
+end)
+for list, _ in pairs(Conf.Products) do
+    if list == "leisure" then
+        for _, item in pairs(Conf.Products[list]) do
+            local i = #LeisureMenu+1
+            local val = item.max / 5
+            LeisureMenu[i] = menu4:AddSlider({ label = QBCore.Shared.Items[item.name]["label"], value = 0, values = {
+                { label = '0', value = 0, description = '' },
+                { label = val, value = val, description = '' },
+                { label = val*2, value = val*2, description = '' },
+                { label = val*3, value = val*3, description = '' },
+                { label = val*4, value = val*4, description = '' },
+                { label = val*5, value = val*5, description = '' }
+            }})
+            LeisureMenu[i]:On('select', function(item, value) 
+                MenuList[i] = value
+                QBCore.Functions.Notify("Objet ajouté a la commande")
+            end)
+        end
+    end 
+end
 
+--Menu Hardware
+local HardwareMenu = {}
+local order_hardware_button = menu5:AddButton({
+    label = 'Commander',
+    value = nil,
+    description = 'Commander la selection'
+})
+order_hardware_button:On('select', function(item)
+    TriggerEvent('qb-postopjob:client:Order', MenuList, "hardware")
+end)
+for list, _ in pairs(Conf.Products) do
+    if list == "hardware" then
+        for _, item in pairs(Conf.Products[list]) do
+            local i = #HardwareMenu+1
+            local val = item.max / 5
+            HardwareMenu[i] = menu5:AddSlider({ label = QBCore.Shared.Items[item.name]["label"], value = 0, values = {
+                { label = '0', value = 0, description = '' },
+                { label = val, value = val, description = '' },
+                { label = val*2, value = val*2, description = '' },
+                { label = val*3, value = val*3, description = '' },
+                { label = val*4, value = val*4, description = '' },
+                { label = val*5, value = val*5, description = '' }
+            }})
+            HardwareMenu[i]:On('select', function(item, value) 
+                MenuList[i] = value
+                QBCore.Functions.Notify("Objet ajouté a la commande")
+            end)
+        end
+    end 
+end
+
+--Menu Coffeeshop
+local CoffeeMenu = {}
+local order_coffee_button = menu6:AddButton({
+    label = 'Commander',
+    value = nil,
+    description = 'Commander la selection'
+})
+order_coffee_button:On('select', function(item)
+    TriggerEvent('qb-postopjob:client:Order', MenuList, "coffeeshop")
+end)
+for list, _ in pairs(Conf.Products) do
+    if list == "coffeeshop" then
+        for _, item in pairs(Conf.Products[list]) do
+            local i = #CoffeeMenu+1
+            local val = item.max / 5
+            CoffeeMenu[i] = menu6:AddSlider({ label = QBCore.Shared.Items[item.name]["label"], value = 0, values = {
+                { label = '0', value = 0, description = '' },
+                { label = val, value = val, description = '' },
+                { label = val*2, value = val*2, description = '' },
+                { label = val*3, value = val*3, description = '' },
+                { label = val*4, value = val*4, description = '' },
+                { label = val*5, value = val*5, description = '' }
+            }})
+            CoffeeMenu[i]:On('select', function(item, value) 
+                MenuList[i] = value
+                QBCore.Functions.Notify("Objet ajouté a la commande")
+            end)
+        end
+    end 
+end
     --Gestion commande et payement
 RegisterNetEvent('qb-postopjob:client:Order', function(items, list)
     --Get items and quantities + total
@@ -376,4 +474,18 @@ end)
 
 RegisterNetEvent('QBCore:Client:SetDuty', function(duty)
     onDuty = duty
+end)
+
+CreateThread(function()
+    if Conf.ShowBlip then
+        StoreBlip = AddBlipForCoord(Conf.Locations["duty"]["x"], Conf.Locations["duty"]["y"], Conf.Locations["duty"]["z"])
+        SetBlipSprite(StoreBlip, 267)
+        SetBlipColour(StoreBlip, 56)
+        SetBlipScale(StoreBlip, 0.6)
+        SetBlipDisplay(StoreBlip, 4)
+        SetBlipAsShortRange(StoreBlip, true)
+        BeginTextCommandSetBlipName("STRING")
+        AddTextComponentSubstringPlayerName("PostOp")
+        EndTextCommandSetBlipName(StoreBlip)
+    end
 end)
